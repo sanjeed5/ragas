@@ -1,0 +1,15 @@
+AI Notes:
+
+docs/howtos/customizations/_run_config.md: -1[0],-3[0],-5[0],-7-8[0],-10[0],-12[0],-16[0],-18[0],-20-21[0],-23[0],-27-30[0],-32[0],-34-42[0],-44-45[0],-47-52[0]
+docs/howtos/customizations/index.md: +8[1] -8[1]
+docs/howtos/customizations/run_config.ipynb: -1-8[0],-9[2],-10[0],-11[2],-12[0],-13-14[2],-15-20[0],-21[2],-22[0],-23[2],-24-33[0],-34[2],-35[0],-36[2],-37-42[0],-43[2],-44-101[0]
+docs/howtos/customizations/run_config.md: +1[1],+3[1],+5[1],+7-10[1],+12-16[1],+18[1],+20-29[1],+31[1],+33-36[1],+38[1],+40[1],+42-44[1],+46-55[1],+57-58[1],+60-61[1],+64[1],+66[1],+68-69[1],+71[1],+73-74[1],+76-84[1],+86[1],+88-93[1],+95-96[1],+98-99[1],+101-107[1]
+mkdocs.yml: +92[1] -92[1]
+tests/docs/__init__.py: +1-2[1]
+tests/docs/test_run_config.py: +1[1],+3-4[1],+6[1],+8[1],+11-13[1],+15-16[1],+18-22[1],+24[1],+26-34[1],+36-37[1],+40-43[1],+45[1],+47-55[1],+57-59[1],+62-64[1],+66-67[1],+69[1]
+
+Conversations:
+
+[0]: c7c2d861-2123-4e70-a49e-e6d9c496822c; Update run config how-to guide; claude-4.5-opus-high-thinking;
+[1]: ddf3cee9-4918-40da-8249-b4c0c7f989df; Update run configuration and deprecate methods; claude-4.5-opus-high-thinking;
+[2]: 4fa2aa0e-690f-433d-b839-fa20249eefc8; Understanding runconfig and collections API; claude-4.5-opus-high-thinking;
