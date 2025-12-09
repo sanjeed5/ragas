@@ -1,0 +1,13 @@
+AI Notes:
+
+.cursor/rules/docs-structure.mdc: +34-39[0] -34[0]
+docs/concepts/metrics/overview/index.md: +64[0],+98[0],+109[0] -64[0],-98[0]
+docs/howtos/customizations/metrics/modifying-prompts-metrics.md: +1-178[0]
+docs/references/prompt.md: +72[0] -72[0]
+mkdocs.yml: +97[0],+98[1] -97[0],-98[1]
+tests/docs/test_modifying_prompts_metrics.py: +1-248[0]
+
+Conversations:
+
+[0]: 10d618f5-79ab-46a0-a1ae-6541b119248d; Update documentation for modifying prompts metrics; claude-4.5-opus-high-thinking;
+[1]: 83635961-7db5-45a2-a365-721e203dc5e6; Update metrics language adaptation guide; claude-4.5-opus-high-thinking;
