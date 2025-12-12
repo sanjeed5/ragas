@@ -1,0 +1,12 @@
+AI Notes:
+
+docs/howtos/customizations/index.md: +13[0] -13[1]
+docs/howtos/customizations/metrics/metrics_language_adaptation.md: +1-2[2],+3-4[0],+5-11[2],+12[0],+13-23[2],+24-26[0],+27-35[2],+36-41[0],+42-55[2],+56-57[0],+58-75[2],+76-78[0],+79[2]
+src/ragas/prompt/metrics/base_prompt.py: +3[3],+8-13[3],+19-76[3],+151[3],+155[2],+158[2],+159[3],+165-166[2],+167[3],+168-171[2],+172-174[3],+175-178[2],+179-180[3],+183[2],+188-191[3] -7[3],-87[3],-91[2],-94-95[2],-101[3],-103[2],-109-140[2],-141[3],-142-149[2],-151[2]
+
+Conversations:
+
+[0]: 61e44081-6de2-4df5-86e7-75cea651457e; 61e44081; unknown;
+[1]: ba23b451-6e98-4279-9af7-be3a5a527c72; BasePrompt structured output and language guide; claude-4.5-opus-high-thinking;
+[2]: 83635961-7db5-45a2-a365-721e203dc5e6; 83635961; unknown;
+[3]: efb67299-4bfb-4159-ac6a-d07273d8c2ed; efb67299; unknown;
