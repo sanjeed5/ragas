@@ -1,4 +1,4 @@
-# Test change to trigger docs auto-update workflow
+# Test v2: triggering claude docs auto-update workflow
 from ragas import backends
 from ragas.cache import CacheInterface, DiskCacheBackend, cacher
 from ragas.dataset import Dataset, DataTable
