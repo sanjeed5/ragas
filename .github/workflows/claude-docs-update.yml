@@ -21,6 +21,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      id-token: write  # Required for OIDC token authentication
     
     steps:
       - name: Checkout repository
@@ -104,5 +105,5 @@ jobs:
 
           # Limit execution to prevent runaway costs
           # 25 turns allows for: reading diff, checking multiple doc files, making edits, committing
-          claude_args: "--max-turns 25"
+          max_turns: 25
 
