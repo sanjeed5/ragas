@@ -1,0 +1,13 @@
+AI Notes:
+
+.cursor/rules/docs-structure.mdc: +34-39[0] -34[0]
+docs/concepts/metrics/overview/index.md: +64[0],+98[0],+109[0] -64[0],-98[0]
+docs/howtos/customizations/metrics/modifying-prompts-metrics.md: +1-178[0]
+docs/references/prompt.md: +72[0] -72[0]
+mkdocs.yml: +97[0] -97[1]
+tests/docs/test_modifying_prompts_metrics.py: +1-248[0]
+
+Conversations:
+
+[0]: 10d618f5-79ab-46a0-a1ae-6541b119248d; 10d618f5; unknown;
+[1]: 30ab0497-98db-4c6c-b0a4-11a5d6a632ec; PR #2486 merge conflict review; claude-4.5-opus-high-thinking;
