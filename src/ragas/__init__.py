@@ -1,4 +1,4 @@
-# Test change to trigger docs auto-update workflow
+# Test change to trigger docs workflow check (v2)
 from ragas import backends
 from ragas.cache import CacheInterface, DiskCacheBackend, cacher
 from ragas.dataset import Dataset, DataTable
