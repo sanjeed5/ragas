@@ -6,6 +6,7 @@ from ragas.evaluation import aevaluate, evaluate
 from ragas.experiment import Experiment, experiment, version_experiment
 from ragas.run_config import RunConfig
 
+# Test change to trigger docs workflow - will be reverted
 try:
     from ._version import version as __version__
 except ImportError:
