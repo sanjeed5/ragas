@@ -353,6 +353,7 @@ def evaluate(
     raise_exceptions: bool = False,
     column_map: t.Optional[t.Dict[str, str]] = None,
     show_progress: bool = True,
+    verbose: bool = False,
     batch_size: t.Optional[int] = None,
     _run_id: t.Optional[UUID] = None,
     _pbar: t.Optional[tqdm] = None,
@@ -396,6 +397,8 @@ def evaluate(
         it is possible to provide the mapping as a dictionary here. Example: If the dataset column name is `contexts_v1`, it is possible to pass column_map as `{"contexts": "contexts_v1"}`.
     show_progress : bool, optional
         Whether to show the progress bar during evaluation. If set to False, the progress bar will be disabled. The default is True.
+    verbose : bool, optional
+        Whether to enable verbose logging during evaluation. If set to True, detailed logs will be printed. The default is False.
     batch_size : int, optional
         How large the batches should be. If set to None (default), no batching is done.
     return_executor : bool, optional
