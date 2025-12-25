@@ -82,7 +82,7 @@ nav:
           - Evaluation:
               - Evaluation Sample: concepts/components/eval_sample.md
               - Evaluation Dataset: concepts/components/eval_dataset.md
-  
+
   - 🛠️ How-to Guides:
       - howtos/index.md
       - Customizations:
@@ -94,15 +94,17 @@ nav:
               - Cancelling Tasks: howtos/customizations/cancellation.md
           - LLM Adapters: howtos/llm-adapters.md
           - Metrics:
-              - Modify Prompts: howtos/customizations/metrics/_modifying-prompts-metrics.md
+              - Modify Prompts: howtos/customizations/metrics/modifying-prompts-metrics.md
               - Adapt Metrics to Languages: howtos/customizations/metrics/_metrics_language_adaptation.md
-              - Write your own Metrics: howtos/customizations/metrics/_write_your_own_metric.md
-              - Write your own Metrics - (advanced): howtos/customizations/metrics/_write_your_own_metric_advanced.md
+              - Train and Align Metrics: howtos/customizations/metrics/train_your_own_metric.md
           - Testset Generation:
               - Non-English Testset Generation: howtos/customizations/testgenerator/_language_adaptation.md
               - Persona Generation: howtos/customizations/testgenerator/_persona_generator.md
               - Custom Single-hop Query: howtos/customizations/testgenerator/_testgen-custom-single-hop.md
               - Custom Multi-hop Query: howtos/customizations/testgenerator/_testgen-customisation.md
+              - Using Pre-chunked Data: howtos/customizations/testgenerator/prechunked_data.md
+          - Optimizers:
+              - DSPy Optimizer: howtos/customizations/optimizers/index.md
 
       - Applications:
           - howtos/applications/index.md
@@ -136,6 +138,7 @@ nav:
               - Google Gemini: howtos/integrations/gemini.md
               - OCI Gen AI: howtos/integrations/oci_genai.md
           - Frameworks:
+              - AG-UI: howtos/integrations/ag_ui.md
               - Griptape: howtos/integrations/griptape.md
               - Haystack: howtos/integrations/haystack.md
               - LangChain: howtos/integrations/langchain.md
@@ -154,9 +157,11 @@ nav:
       - Prompt: references/prompt.md
       - LLMs: references/llms.md
       - Embeddings: references/embeddings.md
+      - Tokenizers: references/tokenizers.md
       - RunConfig: references/run_config.md
       - Executor: references/executor.md
       - Cache: references/cache.md
+      - Optimizers: references/optimizers.md
     - Evaluation:
       - Schemas: references/evaluation_schema.md
       - Metrics: references/metrics.md

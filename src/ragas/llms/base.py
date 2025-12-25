@@ -153,6 +153,16 @@ class LangchainLLMWrapper(BaseRagasLLM):
         bypass_temperature: bool = False,
         bypass_n: bool = False,
     ):
+        import warnings
+
+        warnings.warn(
+            "LangchainLLMWrapper is deprecated and will be removed in a future version. "
+            "Use llm_factory instead: "
+            "from openai import OpenAI; from ragas.llms import llm_factory; "
+            "client = OpenAI(api_key='...'); llm = llm_factory('gpt-4o-mini', client=client)",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         super().__init__(cache=cache)
         self.langchain_llm = langchain_llm
         if run_config is None:
@@ -360,6 +370,16 @@ class LlamaIndexLLMWrapper(BaseRagasLLM):
         cache: t.Optional[CacheInterface] = None,
         bypass_temperature: bool = False,
     ):
+        import warnings
+
+        warnings.warn(
+            "LlamaIndexLLMWrapper is deprecated and will be removed in a future version. "
+            "Use llm_factory instead: "
+            "from openai import OpenAI; from ragas.llms import llm_factory; "
+            "client = OpenAI(api_key='...'); llm = llm_factory('gpt-4o-mini', client=client)",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         super().__init__(cache=cache)
         self.llm = llm
         # Certain LLMs (e.g., OpenAI o1 series) do not support temperature
@@ -464,18 +484,53 @@ def _patch_client_for_provider(client: t.Any, provider: str) -> t.Any:
 
     provider_enum = provider_map.get(provider, Provider.OPENAI)
 
+    # Use JSON mode to avoid issues with Dict types in function calling
     if hasattr(client, "acompletion"):
         return instructor.AsyncInstructor(
             client=client,
             create=client.messages.create,
             provider=provider_enum,
+            mode=instructor.Mode.JSON,
         )
     else:
         return instructor.Instructor(
             client=client,
             create=client.messages.create,
             provider=provider_enum,
+            mode=instructor.Mode.JSON,
         )
+
+
+def _is_new_google_genai_client(client: t.Any) -> bool:
+    """
+    Detect if client is from the new google-genai SDK vs old google-generativeai.
+
+    New SDK (google-genai):
+        - Import: from google import genai / import google.genai
+        - Client: genai.Client(api_key="...")
+        - Module: google.genai.client.Client
+
+    Old SDK (google-generativeai):
+        - Import: import google.generativeai as genai
+        - Client: genai.GenerativeModel("model-name")
+        - Module: google.generativeai.generative_models.GenerativeModel
+
+    Note: The old SDK is deprecated (support ends Aug 2025). The new SDK is recommended
+    but has a known upstream instructor issue with safety settings. See:
+    https://github.com/567-labs/instructor/issues/1658
+    """
+    client_module = getattr(client, "__module__", "") or ""
+    client_class = client.__class__.__name__
+
+    # New SDK: google.genai.client.Client or similar
+    if "google.genai" in client_module and "generativeai" not in client_module:
+        return True
+
+    # Check class name as fallback (new SDK uses Client, old uses GenerativeModel)
+    if client_class == "Client" and "genai" in client_module.lower():
+        return True
+
+    return False
 
 
 def _get_instructor_client(client: t.Any, provider: str) -> t.Any:
@@ -483,17 +538,38 @@ def _get_instructor_client(client: t.Any, provider: str) -> t.Any:
     Get an instructor-patched client for the specified provider.
 
     Uses provider-specific methods when available, falls back to generic patcher.
+
+    Note: For OpenAI, we use Mode.JSON instead of the default Mode.TOOLS because
+    OpenAI's function calling (TOOLS mode) has issues with Dict type annotations
+    in Pydantic models - it returns empty objects `{}` instead of proper structured
+    data. Mode.JSON works correctly with all Pydantic types including Dict.
+    See: https://github.com/vibrantlabsai/ragas/issues/2490
+
+    For Google/Gemini, supports both SDKs:
+    - New SDK (google-genai): Uses instructor.from_genai()
+    - Old SDK (google-generativeai): Uses instructor.from_gemini()
     """
     provider_lower = provider.lower()
 
     if provider_lower == "openai":
-        return instructor.from_openai(client)
+        # Use JSON mode to avoid issues with Dict types in function calling
+        return instructor.from_openai(client, mode=instructor.Mode.JSON)
     elif provider_lower == "anthropic":
         return instructor.from_anthropic(client)
     elif provider_lower in ("google", "gemini"):
-        return instructor.from_gemini(client)
+        # Detect which Google SDK is being used
+        if _is_new_google_genai_client(client):
+            # New google-genai SDK - uses instructor.from_genai()
+            # WARNING: Known upstream issue with instructor sending invalid safety
+            # settings (HARM_CATEGORY_JAILBREAK). Track: github.com/567-labs/instructor/issues/1658
+            # Workaround: Use OpenAI-compatible endpoint with Gemini base URL instead.
+            return instructor.from_genai(client)
+        else:
+            # Old google-generativeai SDK (deprecated, support ends Aug 2025)
+            return instructor.from_gemini(client)
     elif provider_lower == "litellm":
-        return instructor.from_litellm(client)
+        # Use JSON mode to avoid issues with Dict types in function calling
+        return instructor.from_litellm(client, mode=instructor.Mode.JSON)
     elif provider_lower == "perplexity":
         return instructor.from_perplexity(client)
     else:
@@ -505,6 +581,7 @@ def llm_factory(
     provider: str = "openai",
     client: t.Optional[t.Any] = None,
     adapter: str = "auto",
+    cache: t.Optional[CacheInterface] = None,
     **kwargs: t.Any,
 ) -> InstructorBaseRagasLLM:
     """
@@ -529,6 +606,9 @@ def llm_factory(
                 - "auto": Auto-detect based on provider/client (recommended)
                 - "instructor": Use Instructor library
                 - "litellm": Use LiteLLM (supports 100+ providers)
+        cache: Optional cache backend for caching LLM responses.
+               Pass DiskCacheBackend() for persistent caching across runs.
+               Saves costs and speeds up repeated evaluations by 60x.
         **kwargs: Additional model arguments (temperature, max_tokens, top_p, etc).
 
     Returns:
@@ -541,10 +621,15 @@ def llm_factory(
     Examples:
         from openai import OpenAI
 
-        # OpenAI (auto-detects instructor adapter)
+        # Basic usage
         client = OpenAI(api_key="...")
         llm = llm_factory("gpt-4o-mini", client=client)
         response = llm.generate(prompt, ResponseModel)
+
+        # With caching (recommended for experiments)
+        from ragas.cache import DiskCacheBackend
+        cache = DiskCacheBackend()
+        llm = llm_factory("gpt-4o-mini", client=client, cache=cache)
 
         # Anthropic
         from anthropic import Anthropic
@@ -592,7 +677,9 @@ def llm_factory(
 
     try:
         adapter_instance = get_adapter(adapter)
-        llm = adapter_instance.create_llm(client, model, provider_lower, **kwargs)
+        llm = adapter_instance.create_llm(
+            client, model, provider_lower, cache=cache, **kwargs
+        )
     except ValueError as e:
         # Re-raise ValueError from get_adapter for unknown adapter names
         # Also handle adapter initialization failures
@@ -669,6 +756,7 @@ class InstructorLLM(InstructorBaseRagasLLM):
         model: str,
         provider: str,
         model_args: t.Optional[InstructorModelArgs] = None,
+        cache: t.Optional[CacheInterface] = None,
         **kwargs,
     ):
         self.client = client
@@ -682,8 +770,14 @@ class InstructorLLM(InstructorBaseRagasLLM):
         # Convert to dict and merge with any additional kwargs
         self.model_args = {**model_args.model_dump(), **kwargs}
 
+        self.cache = cache
+
         # Check if client is async-capable at initialization
         self.is_async = self._check_client_async()
+
+        if self.cache is not None:
+            self.generate = cacher(cache_backend=self.cache)(self.generate)  # type: ignore
+            self.agenerate = cacher(cache_backend=self.cache)(self.agenerate)  # type: ignore
 
     def _map_provider_params(self) -> t.Dict[str, t.Any]:
         """Route to provider-specific parameter mapping.
@@ -950,6 +1044,7 @@ class InstructorLLM(InstructorBaseRagasLLM):
 
             if self.provider.lower() == "google":
                 result = self.client.create(
+                    model=self.model,
                     messages=messages,
                     response_model=response_model,
                     **provider_kwargs,
@@ -994,6 +1089,7 @@ class InstructorLLM(InstructorBaseRagasLLM):
 
         if self.provider.lower() == "google":
             result = await self.client.create(
+                model=self.model,
                 messages=messages,
                 response_model=response_model,
                 **provider_kwargs,
